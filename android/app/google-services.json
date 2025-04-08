@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "435982348302",
+    "project_id": "socialapptutorial-5dbbc",
+    "storage_bucket": "socialapptutorial-5dbbc.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:435982348302:android:36887f06b627c1dc7d0c5f",
+        "android_client_info": {
+          "package_name": "com.example.bundeerv1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCjFf14dUqFiNjO0oFkamZWDMT6N7fWMNk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
