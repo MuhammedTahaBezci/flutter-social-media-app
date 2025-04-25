@@ -46,6 +46,7 @@ class AuthCubit extends Cubit<AuthState> {
         emit(Unauthenticated()); // Kullanıcı null ise başarısız giriş
       }
     } catch (e) {
+      print("Giriş hatası: $e"); // bu satırı ekle
       emit(AuthError(e.toString())); // Hata mesajı gönderilir
       emit(Unauthenticated()); // UI "giriş başarısız" olarak ayarlanır
     }

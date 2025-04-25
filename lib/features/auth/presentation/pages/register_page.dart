@@ -1,43 +1,24 @@
 import 'package:bundeerv1/features/auth/presentation/components/my_button.dart';
 import 'package:bundeerv1/features/auth/presentation/components/my_text_field.dart';
-import 'package:bundeerv1/features/auth/presentation/cubits/auth_cubit.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-class LoginPage extends StatefulWidget {
-  final void Function()? togglePages; // Giriş sayfasında tıklama olayı
+class RegisterPage extends StatefulWidget {
+  final void Function()? toglePages; // Kayıt sayfasında tıklama olayı
 
-  const LoginPage({super.key, required this.togglePages});
+  const RegisterPage({super.key, required this.toglePages});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-// LoginPage'in durum sınıfı
-class _LoginPageState extends State<LoginPage> {
-  //metin kontrolü(parola-email)
+class _RegisterPageState extends State<RegisterPage> {
+  //metin kontrolü(parola-email-isim)
+  // TextEditingController, metin alanlarının içeriğini kontrol etmek için kullanılır
+  final nameController = TextEditingController();
   final emailController = TextEditingController();
   final pwController = TextEditingController();
-
-  void login() {
-    // Giriş işlemleri burada yapılacak
-    final email = emailController.text; // Email alanından metni alır
-    final pw = pwController.text; // Parola alanından metni alır
-    // Burada email ve password ile giriş işlemleri yapılabilir
-
-    // auth cubit ile giriş işlemleri yapılabilir
-    final AuthCubit authCubit = context.read<AuthCubit>();
-
-    if (email.isNotEmpty && pw.isNotEmpty) {
-      // Eğer email ve parola alanları boş değilse giriş yapar
-      authCubit.login(email, pw);
-    } else {
-      // Eğer alanlar boşsa hata mesajı gösterir
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Lütfen email ve şifrenizi girin.")),
-      );
-    }
-  }
+  final pwConfirmController = TextEditingController();
+  // Parola doğrulama alanı için kontrolcü
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +44,7 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 50), // Boşluk bırakılır
                 // Karşılama mesajı
                 Text(
-                  "Hoş geldin, seni çok özledik.",
+                  "Sizin için bir hesap oluşturalım.",
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.primary,
                     fontSize: 16,
@@ -71,6 +52,14 @@ class _LoginPageState extends State<LoginPage> {
                 ),
 
                 const SizedBox(height: 25),
+                // İsim alanı
+                MyTextField(
+                  controller: nameController,
+                  hintText: "Name",
+                  obscureText: false,
+                ),
+
+                const SizedBox(height: 10),
 
                 MyTextField(
                   controller: emailController,
@@ -85,9 +74,16 @@ class _LoginPageState extends State<LoginPage> {
                   obscureText: true, // Şifre alanı true girilen metni gizler
                 ), // Parola alanı
 
+                const SizedBox(height: 10), // Boşluk bırakılır
+                MyTextField(
+                  controller: pwConfirmController,
+                  hintText: "Parola Tekrar",
+                  obscureText: true, // Şifre alanı true girilen metni gizler
+                ), // Parola alanı
+
                 const SizedBox(height: 25), // Boşluk bırakılır
-                // Giriş butonu
-                MyButton(onTap: login, text: "Giriş Yap"),
+                // Register butonu
+                MyButton(onTap: () {}, text: "Kayıt Ol"),
 
                 const SizedBox(height: 50),
 
@@ -95,16 +91,16 @@ class _LoginPageState extends State<LoginPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "kayıtlı değil misin?",
+                      "Zaten bir hesabın var mı?",
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
                         fontSize: 16,
                       ),
                     ),
                     GestureDetector(
-                      onTap: widget.togglePages, // Kayıt olma sayfasına geçiş
+                      onTap: widget.toglePages, // Kayıt olma sayfasına geçiş
                       child: Text(
-                        " Kayıt Ol",
+                        " Giriş Yap",
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.inversePrimary,
                           fontWeight: FontWeight.bold,
