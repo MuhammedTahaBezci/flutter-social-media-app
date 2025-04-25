@@ -1,9 +1,11 @@
 import 'package:bundeerv1/features/auth/domain/entities/app_user.dart';
 import 'package:bundeerv1/features/auth/domain/repos/auth_repo.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class FirebaseAuthRepo implements AuthRepo {
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 
   // Şu an oturum açmış olan kullanıcıyı getirir
   @override
@@ -64,6 +66,13 @@ class FirebaseAuthRepo implements AuthRepo {
         email: email,
         name: name,
       );
+      // Kullanıcı bilgileri firestore'a kaydediliyor
+      await firebaseFirestore
+          .collection('users')
+          .doc(user.uid)
+          .set(
+            user.toJson(),
+          ); // AppUser nesnesini JSON formatına çevirip kaydediyoruz
 
       return user;
     } catch (e) {
