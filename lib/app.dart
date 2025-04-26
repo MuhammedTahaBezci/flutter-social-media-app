@@ -1,4 +1,4 @@
-import 'package:bundeerv1/features/auth/post/presentation/pages/home_page.dart';
+import 'package:bundeerv1/features/home/presentation/pages/home_page.dart';
 import 'package:bundeerv1/features/auth/presentation/cubits/auth_cubit.dart';
 import 'package:bundeerv1/features/auth/presentation/cubits/auth_states.dart';
 import 'package:bundeerv1/features/auth/presentation/pages/auth_page.dart';
