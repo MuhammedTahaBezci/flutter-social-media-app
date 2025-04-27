@@ -2,6 +2,8 @@ import 'package:bundeerv1/features/home/presentation/pages/home_page.dart';
 import 'package:bundeerv1/features/auth/presentation/cubits/auth_cubit.dart';
 import 'package:bundeerv1/features/auth/presentation/cubits/auth_states.dart';
 import 'package:bundeerv1/features/auth/presentation/pages/auth_page.dart';
+import 'package:bundeerv1/features/profile/data/firebase_profile_repo.dart';
+import 'package:bundeerv1/features/profile/presentation/cubits/profile_cubit.dart';
 import 'package:bundeerv1/themes/light_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,13 +14,26 @@ class MyApp extends StatelessWidget {
   // Firebase üzerinden kimlik doğrulama işlemleri için repository
   final authRepo = FirebaseAuthRepo(); // camelCase kullan
 
+  // Profil işlemlerini yönetecek repository nesnesi
+  final profileRepo = FirebaseProfileRepo();
+
   MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      // AuthCubit'i sağla ve uygulama başladığında auth durumunu kontrol et
-      create: (context) => AuthCubit(authRepo: authRepo)..checkAuth(),
+    return MultiBlocProvider(
+      // Birden fazla Cubit sağlayıcısını bir arada sunuyoruz
+      providers: [
+        BlocProvider<AuthCubit>(
+          // Uygulama açılır açılmaz kullanıcının giriş yapıp yapmadığını kontrol ediyor
+          create: (context) => AuthCubit(authRepo: authRepo)..checkAuth(),
+        ),
+
+        BlocProvider<ProfileCubit>(
+          // Profil verilerini yönetecek ProfileCubit sağlanıyor
+          create: (context) => ProfileCubit(profileRepo: profileRepo),
+        ),
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false, // Debug bandını kaldır
         theme: lightMode, // Uygulama teması light mode olarak ayarlandı

@@ -1,6 +1,8 @@
+import 'package:bundeerv1/features/auth/presentation/cubits/auth_cubit.dart';
 import 'package:bundeerv1/features/home/components/my_drawer_tile.dart';
 import 'package:bundeerv1/features/profile/presentation/pages/profile_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 // Uygulamanın yan menüsü (Drawer bileşeni)
 class MyDrawer extends StatelessWidget {
@@ -43,9 +45,16 @@ class MyDrawer extends StatelessWidget {
                 icon: Icons.person,
                 onTap: () {
                   Navigator.of(context).pop(); // Çık
+
+                  final user = context.read<AuthCubit>().currentUser;
+                  // AuthCubit içinden şu an giriş yapmış kullanıcı bilgisini çekiyoruz
+                  String? uid = user!.uid;
+                  // Kullanıcı nesnesinden uid (kullanıcı ID) bilgisini alıyoruz
+
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => const ProfilePage(),
+                      builder: (context) => ProfilePage(uid: uid),
+                      // Daha sonra ProfilePage sayfasına gidiyoruz ve uid bilgisini sayfaya gönderiyoruz
                     ),
                   );
                 },
@@ -56,7 +65,7 @@ class MyDrawer extends StatelessWidget {
                 title: "A R A",
                 icon: Icons.search,
                 onTap: () {
-                  // Profil sayfasına gitme işlemi
+                  // Arama sayfası gitme işlemi
                 },
               ),
 
@@ -74,9 +83,11 @@ class MyDrawer extends StatelessWidget {
               MyDrawerTile(
                 title: "Ç I K I Ş",
                 icon: Icons.logout,
-                onTap: () {
-                  // Profil sayfasına gitme işlemi
-                },
+                onTap:
+                    () =>
+                        context
+                            .read<AuthCubit>()
+                            .logout(), // AuthCubit'ten çıkış yapma işlemi
               ),
             ],
           ),
