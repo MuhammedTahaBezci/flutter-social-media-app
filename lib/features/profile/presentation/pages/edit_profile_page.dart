@@ -18,21 +18,60 @@ class _EditProfilePageState extends State<EditProfilePage> {
   // Kullanıcının biyografisini düzenlemek için bir TextEditingController oluşturuyoruz
   final bioTextController = TextEditingController();
 
+  // profil güncelleme işlemi için buton tıklama fonksiyonu
+  void updateProfile() async {
+    // profil cubit'ini alıyoruz
+    final profileCubit = context.read<ProfileCubit>();
+
+    // kullanıcının UID'sini alıyoruz
+    if (bioTextController.text.isNotEmpty) {
+      // eğer biyografi alanı boş değilse güncelleme işlemi yapıyoruz
+      profileCubit.updateProfile(
+        uid: widget.user.uid,
+        newBio: bioTextController.text,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ProfileCubit, ProfileState>(
       builder: (context, state) {
-        return buildEditPage();
+        // Eğer profil güncelleniyorsa, kullanıcıya yüklenme animasyonu gösterilir
+        if (state is ProfileLoading) {
+          return const Scaffold(
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                  Text("Profil güncelleniyor..."),
+                ],
+              ),
+            ),
+          );
+        } else {
+          // Eğer yüklenme durumu yoksa düzenleme arayüzü gösterilir
+          return buildEditPage();
+        }
       },
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state is ProfileLoaded) {
+          Navigator.pop(context);
+        }
+      },
     );
   }
 
+  // Arayüzün (UI) esas kısmını oluşturan yardımcı fonksiyon
   Widget buildEditPage() {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Profil Düzenle"),
         foregroundColor: Theme.of(context).colorScheme.primary,
+        actions: [
+          IconButton(onPressed: updateProfile, icon: const Icon(Icons.upload)),
+        ],
       ),
       body: Column(
         children: [
@@ -45,7 +84,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               controller: bioTextController,
               // Kullanıcının girdiği değerleri kontrol eder
               hintText: widget.user.bio,
-              // Mevcut biyografi varsayılan ipucu olarak gösterilir
+              // Mevcut biyografi varsayılan metin olarak gösterilir
               obscureText: false, // Şifre alanı olmadığı için false
             ),
           ),
