@@ -1,12 +1,17 @@
+import 'dart:typed_data';
+
 import 'package:bundeerv1/features/profile/domain/entities/repos/profile_repo.dart';
 import 'package:bundeerv1/features/profile/presentation/cubits/profile_states.dart';
+import 'package:bundeerv1/features/storage/domain/storage_repo.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {
   final ProfileRepo profileRepo;
+  final StorageRepo strogaRepo;
 
   // Cubit başlatılırken ilk durum (ProfileInitial) atanıyor
-  ProfileCubit({required this.profileRepo}) : super(ProfileInitial());
+  ProfileCubit({required this.profileRepo, required this.strogaRepo})
+    : super(ProfileInitial());
 
   // Kullanıcı profili verisini Firestore'dan çekmek için fonksiyon
   Future<void> fetchUserProfile(String uid) async {
@@ -27,7 +32,12 @@ class ProfileCubit extends Cubit<ProfileState> {
   }
 
   // Kullanıcının profil bilgisini güncellemek için fonksiyon
-  Future<void> updateProfile({required String uid, String? newBio}) async {
+  Future<void> updateProfile({
+    required String uid,
+    String? newBio,
+    Uint8List? imageWebBytes,
+    String? imageMobilePath,
+  }) async {
     // Güncelleme işlemi başlarken yükleme durumu emit edilir
     emit(ProfileLoading());
 
@@ -37,6 +47,25 @@ class ProfileCubit extends Cubit<ProfileState> {
       if (currentUser == null) {
         emit(ProfileError("profil güncellemesi için kullanıcı getirilemedi"));
         return;
+      }
+
+      // profile fotoğrafı güncelleniyorsa
+      String? imageDownloadUrl;
+
+      if (imageWebBytes != null || imageMobilePath != null) {
+        // Web ortamında dosya yükleniyorsa
+        if (imageWebBytes != null) {
+          imageDownloadUrl = await strogaRepo.uploadProfileImageWeb(
+            uid,
+            imageWebBytes,
+          );
+        } else if (imageMobilePath != null) {
+          // Mobil ortamda dosya yükleniyorsa
+          imageDownloadUrl = await strogaRepo.uploadProfileImageMobile(
+            imageMobilePath,
+            uid,
+          );
+        }
       }
 
       // Kullanıcıdan gelen yeni biyografi bilgisi ile mevcut kullanıcı bilgileri güncelleniyor

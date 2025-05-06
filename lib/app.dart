@@ -4,6 +4,7 @@ import 'package:bundeerv1/features/auth/presentation/cubits/auth_states.dart';
 import 'package:bundeerv1/features/auth/presentation/pages/auth_page.dart';
 import 'package:bundeerv1/features/profile/data/firebase_profile_repo.dart';
 import 'package:bundeerv1/features/profile/presentation/cubits/profile_cubit.dart';
+import 'package:bundeerv1/features/storage/data/firebase_storge_repo.dart';
 import 'package:bundeerv1/themes/light_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,10 +13,13 @@ import 'package:bundeerv1/features/auth/data/firebase_auth_repo.dart';
 // Uygulamanın kök widget'ı
 class MyApp extends StatelessWidget {
   // Firebase üzerinden kimlik doğrulama işlemleri için repository
-  final authRepo = FirebaseAuthRepo(); // camelCase kullan
+  final firebaseAuthRepo = FirebaseAuthRepo(); // camelCase kullan
 
   // Profil işlemlerini yönetecek repository nesnesi
-  final profileRepo = FirebaseProfileRepo();
+  final firebaseProfileRepo = FirebaseProfileRepo();
+
+  final firebaseStorageRepo =
+      FirebaseStorgeRepo(); // Storage işlemleri için repository
 
   MyApp({super.key});
 
@@ -26,12 +30,18 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider<AuthCubit>(
           // Uygulama açılır açılmaz kullanıcının giriş yapıp yapmadığını kontrol ediyor
-          create: (context) => AuthCubit(authRepo: authRepo)..checkAuth(),
+          create:
+              (context) => AuthCubit(authRepo: firebaseAuthRepo)..checkAuth(),
         ),
 
         BlocProvider<ProfileCubit>(
           // Profil verilerini yönetecek ProfileCubit sağlanıyor
-          create: (context) => ProfileCubit(profileRepo: profileRepo),
+          create:
+              (context) => ProfileCubit(
+                profileRepo: firebaseProfileRepo,
+                strogaRepo:
+                    firebaseStorageRepo, // Storage işlemleri için repository
+              ), // Storage repo olarak authRepo kullanılıyor
         ),
       ],
       child: MaterialApp(
