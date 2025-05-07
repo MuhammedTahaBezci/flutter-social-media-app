@@ -66,12 +66,21 @@ class ProfileCubit extends Cubit<ProfileState> {
             uid,
           );
         }
+
+        if (imageDownloadUrl == null) {
+          emit(ProfileError("Profil fotoğrafı yüklenirken hata oluştu."));
+          return;
+        }
       }
 
       // Kullanıcıdan gelen yeni biyografi bilgisi ile mevcut kullanıcı bilgileri güncelleniyor
       final updatedProfile = currentUser.copyWith(
         // Eğer yeni biyografi bilgisi verilmemişse mevcut biyografi bilgisi kullanılacak
         newBio: newBio ?? currentUser.bio,
+
+        // Eğer yeni profil fotoğrafı URL'si verilmemişse mevcut profil fotoğrafı URL'si kullanılacak
+        // imageDownloadUrl null ise mevcut profil fotoğrafı URL'si kullanılacak
+        newProfileImgeUrl: imageDownloadUrl ?? currentUser.profileImageUrl,
       );
 
       // Firestore'da güncelleme işlemi yapılıyor
